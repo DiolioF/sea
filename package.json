@@ -1,0 +1,14 @@
+{
+  "name": "sea-energia",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sitio one-page de SEA Energía: sistemas solares llave en mano y electricidad industrial",
+  "scripts": {
+    "dev": "npx serve -l 8080 .",
+    "build": "node tools/build-static.mjs",
+    "build:clone": "node tools/clone/build-clone.mjs tools/clone/capture . && node tools/clone/patch-html.mjs index.html && node tools/clone/responsive.mjs tools/clone/capture ."
+  },
+  "devDependencies": {
+    "cheerio": "^1.2.0"
+  }
+}
