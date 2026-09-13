@@ -14,6 +14,8 @@ for (const directory of ['assets/css', 'assets/images', 'assets/fonts', 'assets/
 }
 await cp(path.join(root, 'index.html'), path.join(output, 'index.html'));
 await cp(path.join(root, 'logo_blanco.png'), path.join(output, 'logo_blanco.png'));
+await cp(path.join(root, 'sea_logo.png'), path.join(output, 'sea_logo.png'));
+await cp(path.join(root, 'assets', 'css', 'sea.css'), path.join(output, 'assets', 'css', 'sea.css'));
 await cp(path.join(root, 'assets', 'css', '99-template.css'), path.join(output, 'assets', 'css', '99-template.css'));
 await cp(path.join(root, 'js', 'main.js'), path.join(output, 'js', 'main.js'));
 
