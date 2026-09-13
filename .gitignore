@@ -7,6 +7,7 @@ reference/
 tools/clone/
 assets/css/*
 !assets/css/99-template.css
+!assets/css/sea.css
 assets/fonts/*
 !assets/fonts/Universal-Sans-Text-Regular.woff2
 !assets/fonts/Universal-Sans-Text-Medium.woff2
@@ -14,6 +15,8 @@ assets/fonts/*
 assets/favicons/*
 !assets/favicons/favicon.svg
 assets/images/*
+!assets/images/sea-*.webp
+!assets/images/sea-image-prompts.md
 !assets/images/Solar-Panels-Install-Desktop.jpg
 !assets/images/Solar-Panels-Install-Mobile.jpg
 !assets/images/Solar-Panels-Install-Tablet.jpg

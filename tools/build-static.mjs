@@ -20,6 +20,10 @@ await cp(path.join(root, 'assets', 'css', '99-template.css'), path.join(output, 
 await cp(path.join(root, 'js', 'main.js'), path.join(output, 'js', 'main.js'));
 
 const images = [
+  'sea-team-desktop.webp', 'sea-team-mobile.webp',
+  'sea-solar-desktop.webp', 'sea-solar-mobile.webp',
+  'sea-industrial-desktop.webp', 'sea-industrial-mobile.webp',
+  'sea-portrait-desktop.webp', 'sea-portrait-mobile.webp',
   'Solar-Panels-Install-Desktop.jpg', 'Solar-Panels-Install-Mobile.jpg', 'Solar-Panels-Install-Tablet.jpg',
   'Solar-Panels-Power-Desktop.jpg', 'Solar-Panels-Power-Mobile.jpg', 'Solar-Panels-Power-Tablet.jpg',
   'Solar-Panels-Save-Desktop.jpg', 'Solar-Panels-Save-Mobile.jpg', 'Solar-Panels-Save-Tablet.jpg',

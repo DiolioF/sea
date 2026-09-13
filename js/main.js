@@ -3,7 +3,7 @@
 
   // Add the real SEA number here, including country code, with digits only.
   // Argentine mobile format: 549 + area code + subscriber number (no 0 or 15).
-  const WHATSAPP_NUMBER = '';
+  const WHATSAPP_NUMBER = '5492235940073';
   const messages = {
     general: 'Hola SEA Energía, quisiera consultar por un proyecto. Estoy en ',
     solar: 'Hola SEA Energía, me interesa un sistema solar llave en mano. Estoy en ',
