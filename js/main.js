@@ -8,14 +8,35 @@
 
   const hero = document.querySelector('.hero');
   const contactSection = document.querySelector('#contacto');
+  const navLinks = Array.from(document.querySelectorAll('.desktop-nav a'));
+  const trackedSections = Array.from(document.querySelectorAll('#servicios, #proyectos, #proceso, #zona, #contacto'));
+  let scrollPending = false;
   const syncHeader = () => {
     header?.classList.toggle('is-scrolled', window.scrollY > 24);
-    const pastHero = Boolean(hero && window.scrollY > hero.offsetHeight * .68);
-    const beforeContact = !contactSection || window.scrollY + window.innerHeight < contactSection.offsetTop + 80;
+    const headerHeight = header?.offsetHeight || 0;
+    const pastHero = Boolean(hero && hero.getBoundingClientRect().bottom < headerHeight);
+    const beforeContact = !contactSection || contactSection.getBoundingClientRect().top > window.innerHeight;
     document.body.classList.toggle('show-mobile-cta', pastHero && beforeContact);
+    const active = trackedSections.filter(section => section.getBoundingClientRect().top <= headerHeight + 100).at(-1);
+    navLinks.forEach(link => {
+      const selected = Boolean(active && link.hash === `#${active.id}`);
+      link.classList.toggle('is-active', selected);
+      if (selected) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+    scrollPending = false;
   };
   syncHeader();
-  window.addEventListener('scroll', syncHeader, { passive: true });
+  const scheduleHeader = () => {
+    if (scrollPending) return;
+    scrollPending = true;
+    window.requestAnimationFrame(syncHeader);
+  };
+  window.addEventListener('scroll', scheduleHeader, { passive: true });
+  window.addEventListener('resize', scheduleHeader, { passive: true });
+  window.addEventListener('load', scheduleHeader, { once: true });
+
+  const pageSurfaces = document.querySelectorAll('main, .site-footer, .mobile-sticky-cta');
 
   const closeMenu = () => {
     if (!menuButton || !mobileNav) return;
@@ -24,6 +45,7 @@
     mobileNav.hidden = true;
     header?.classList.remove('menu-active');
     document.body.classList.remove('menu-open');
+    pageSurfaces.forEach(surface => { surface.inert = false; });
   };
 
   menuButton?.addEventListener('click', () => {
@@ -33,21 +55,37 @@
     mobileNav.hidden = !opening;
     header?.classList.toggle('menu-active', opening);
     document.body.classList.toggle('menu-open', opening);
+    pageSurfaces.forEach(surface => { surface.inert = opening; });
+    if (opening) mobileNav.querySelector('a')?.focus({ preventScroll: true });
   });
   mobileNav?.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
   window.matchMedia('(min-width: 1000px)').addEventListener('change', (event) => { if (event.matches) closeMenu(); });
-  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeMenu(); });
+  document.addEventListener('keydown', event => {
+    if (menuButton?.getAttribute('aria-expanded') !== 'true') return;
+    if (event.key === 'Escape') {
+      closeMenu();
+      menuButton.focus({ preventScroll: true });
+    }
+    if (event.key === 'Tab') {
+      const focusables = [menuButton, ...mobileNav.querySelectorAll('a')];
+      const first = focusables[0];
+      const last = focusables.at(-1);
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault(); last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault(); first.focus();
+      }
+    }
+  });
 
-  const navLinks = Array.from(document.querySelectorAll('.desktop-nav a'));
-  const trackedSections = document.querySelectorAll('#servicios, #proceso, #proyectos, #zona, #contacto');
-  if ('IntersectionObserver' in window) {
-    const navObserver = new IntersectionObserver((entries) => {
-      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (!visible) return;
-      navLinks.forEach((link) => link.classList.toggle('is-active', link.hash === `#${visible.target.id}`));
-    }, { rootMargin: '-22% 0px -64% 0px', threshold: [0, .2, .5] });
-    trackedSections.forEach((section) => navObserver.observe(section));
-  }
+  document.querySelectorAll('[data-service]').forEach(link => {
+    link.addEventListener('click', () => {
+      const service = contactForm?.elements.namedItem('servicio');
+      if (service) service.value = link.dataset.service;
+      formStatus.textContent = '';
+      document.querySelector('.query-result').hidden = true;
+    });
+  });
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!reduceMotion && 'IntersectionObserver' in window) {
@@ -71,12 +109,22 @@
     event.preventDefault();
     const data = new FormData(contactForm);
     const query = ['Hola SEA Energía, quisiera solicitar una evaluación.','',`Nombre: ${data.get('nombre')}`,`Localidad: ${data.get('localidad')}`,`Servicio: ${data.get('servicio')}`,`Consulta: ${data.get('mensaje')}`].join('\n');
+    const preview = document.querySelector('#query-preview');
+    const result = document.querySelector('.query-result');
+    preview.value = query;
+    result.hidden = false;
     try {
       await navigator.clipboard.writeText(query);
-      formStatus.textContent = 'Consulta copiada. Ya podés pegarla en tu mensaje a SEA Energía.';
+      formStatus.textContent = 'Mensaje copiado. Ya podés pegarlo en tu conversación con SEA.';
     } catch {
-      formStatus.textContent = 'Tu consulta está lista. Copiá estos datos para enviarlos por tu canal habitual.';
+      formStatus.textContent = 'Tu mensaje está listo abajo. Seleccionalo y copialo para compartirlo con SEA.';
+      preview.focus({ preventScroll: true });
+      preview.select();
     }
+  });
+  contactForm?.addEventListener('input', () => {
+    formStatus.textContent = '';
+    document.querySelector('.query-result').hidden = true;
   });
 
   const year = document.querySelector('#year');
