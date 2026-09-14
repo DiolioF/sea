@@ -16,3 +16,12 @@ El sitio es estático: `index.html`, `assets/css/99-template.css` y `js/main.js`
 Las fotografías actuales provienen del template y se pueden reemplazar más adelante. Antes de publicar, hay que conectar los datos reales de WhatsApp/correo en el bloque de contacto.
 
 > No ejecutar `npm run build:clone`: ese comando reconstruye el clon original y sobrescribe la personalización.
+
+## Deploy
+
+Cada push a `main` corre `npm run build` y publica `dist/` en GitHub Pages
+(workflow en `.github/workflows/deploy-pages.yml`):
+
+https://dioliof.github.io/sea/
+
+Para activarlo la primera vez: **Settings → Pages → Source: GitHub Actions**.
